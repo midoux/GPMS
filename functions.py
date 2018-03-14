@@ -17,7 +17,7 @@ from math import ceil
 csv.field_size_limit(10000000)
 
 def t():
-    "fonction pour mesure du temps de calcul"
+    "time measure function"
     try:
         t1=time.time()-t0
         if t1<60:
@@ -30,9 +30,9 @@ def t():
     
 t0=time.time()
 
-#####################################
-#Definition des tailles des génomes #
-#####################################
+################
+# Genomes size #
+################
 
 Size={}
 Size["PAOI"]=6264404 #PAOIw
@@ -47,22 +47,22 @@ Size["PM105"]=39593
 #############
 
 def numeric(a):
-    """mise en forme des valeurs numériques
-    input : string comprenant une valeur numérique et des virgules comme séparateur de millier
-    output : int"""
+    """formatting numeric values
+    input : string with numeric value and a comma as thousand separator
+    output : int or float"""
     try:
         return int(a.replace(",",""))
     except:
         return float(a.replace(",",""))
 
-def motif(bacterie="Pa14"): #position - direction - name - mismatch
-    """Lecture dans le fichier associé des positions des motifs
-    input : nom du fichier (positionné dans "DATA/YRS_%s.csv")
-    output : liste avec des tuples comprenant :
-        - la position de fin du motif
-        - un bool de la direction du motif
-        - le nombre de mismatch"""
-    doc=open("DATA/YRS_%s.csv"%bacterie,"rb")
+def motif(bact="Pa14"): #position - direction - name - mismatch
+    """Reading in an associated file patterns position 
+    input : file name (in "DATA/YRS_%s.csv")
+    output : list of tuples with:
+        - end of patterns position
+        - bool with patterns orientation
+        - mismatches count"""
+    doc=open("DATA/YRS_%s.csv"%bact,"rb")
     table=csv.reader(doc)
     
     intitule=table.next()
@@ -100,28 +100,28 @@ def motif(bacterie="Pa14"): #position - direction - name - mismatch
     return X
 
 
-def pourcentMotif(insert,bacterie="Pa14"):
-    """ratio d'insert présents à proximité des motifs définies avec la fonction motif()
-    input : les inserts et le noms de la bactérie associé
-    output : float du ratio"""
-    YRS=motif(bacterie)
+def pourcentMotif(insert,bact="Pa14"):
+    """rate of the inserts close to patterns (define with motif())
+    input : the inserts and bacteria
+    output : float"""
+    YRS=motif(bact)
         
     z=0.
     for yrs in YRS:
         i,sens,mismatch=yrs
         if sens: 
-            #z+=np.sum(insert[1:,i+52:i+78])
             z+=np.sum(insert[1:,i+49:i+81])
         elif not sens:
-            #z+=np.sum(insert[1:,i-78:i-52])
             z+=np.sum(insert[1:,i-81:i-49])
     a=z/np.sum(insert[1:,:])
     #return round(a*100,3)
     return a
 
 def NsiI():
-    """Lecture dans le fichier associé des positions des sites de restriction NsiI (positionné dans DATA/NsiI.csv)
-    output : Liste de tuples comprenant le début et la fin de chaque site NsiI"""
+    """"Reading in an associated file NsiI restriction sites positions (in DATA/NsiI.csv)
+    output : list of tuples with:
+        - beginning of NsiI position
+        - end of NsiI position"""
     doc=open("DATA/NsiI.csv","rb")
     table=csv.reader(doc)
     
@@ -145,16 +145,18 @@ def NsiI():
     return X
 
 def NsiI_list():
-    """ a partir de la liste de la fonction NsiI() produit un liste comprenant l'ensemble des positions des sites NsiI (et une base de part et d'autres)
-    output : liste de int des positions"""
+    """from NsiI() made list of all NsiI restriction sites positions (and one on each side)
+    output : list of int"""
     N=[]
     for i in NsiI():
         N+=range(i[0]-1,i[1]+2)
     return N
 
 def genePAO1():
-    """Lecture des positions des genes a partir du fichier "DATA/gene_PAOI.csv "
-    output : liste des tuples des int des positions des gènes"""
+    """Reading in an associated file genes positions for PAO1 genome =
+    output : list of tuples with:
+        - beginning of gene
+        - end of gene"""
     doc=open("DATA/gene_PAOI.csv","rb")
     table=csv.reader(doc)
     
@@ -177,24 +179,24 @@ def genePAO1():
     return X
 
 def gene_list(cut=0):
-    """Génère une liste de toute les positions intragéniques a partir de la fonction précédente
-    input : cutoff des positions
-    output : liste de int des positions"""
+    """from genePAO1() made list of all genes positions
+    input : cutoff
+    output : list of int"""
     N=[]
     for i in genePAO1():
         N+=range(i[0]+cut,i[1]+1-cut)
     return list(set(N))
 
 def inter_list(cut=0):
-    """Génère une liste de toute les positions intergénique
-    input : cutoff des positions
-    output : liste de int des positions"""
+    """made list of all intergenic positions
+    input : cutoffs
+    output : liste of int"""
     return list(set(range(1,Size["PAOI"]))-set(gene_list(cut=cut)))
 
 def addition(liste):
-    """somme une liste (2 ou 3) d'inserts
-    input : liste
-    output : inserts sommés"""
+    """sum of 2 or 3 inserts list
+    input : lists
+    output : summoned list"""
     if len(liste)==2:
         if list(liste[0][0])==list(liste[1][0]):
             return np.array([liste[0][0],liste[0][1]+liste[1][1],liste[0][2]+liste[1][2]])
@@ -206,9 +208,9 @@ def addition(liste):
         print "ERR0R" 
 
 def group(insert,pas=1):
-    """regroupement des inserts suivant un pas variable
-    input : inserts et pas de binding
-    output : inserts regroupés"""
+    """inserts clustering by a variable binding step
+    input : inserts list and binding step
+    output : bind inserts list"""
     g=np.zeros((3,ceil(float(len(insert[0]))/pas)),dtype=int)
     
     for i in range(len(g[0])):
@@ -216,9 +218,9 @@ def group(insert,pas=1):
     return g
 
 def selectinrange(dico,r):
-    """sélection uniquement des inserts dans une liste de positions données
-    input : dictionnaire des inserts et liste des positions à conserver
-    output : dictionnaire des inserts conserver"""
+    """select inserts in a range
+    input : inserts dict and positions to keep
+    output : inserts dict"""
     out={}
     
     for k in dico.keys():
@@ -227,7 +229,7 @@ def selectinrange(dico,r):
     return out
 
 def readsName(string):
-    """parseur des noms de reads
+    """cleanning reads name
     input : string
     output : string"""
     if "_" in string:
@@ -240,10 +242,9 @@ def readsName(string):
         return string
 
 def csvData (document):
-    """Lecture et mise en forme des inserts présent dans un fichier joint (produit avec Geneious)
-    input : nom du fichier csv a lire 
-    output : un tuple contenant 2 dictionnaires (Debut et Fin d'insertion). Chaque dictionnaire prend comme clé le nom du read parsé et comme valeur un tuple avec un int pour la position et un bool pour l'orientation"""
-    #Dico avec nom du read en clé et tuples (int_position , bool_direction)
+    """Reading and formatting inserts in an attached file (product with Geneious)
+    input : path to csv file 
+    output : a tuple with 2 dictionaries (Beginning inserts and End inserts). Each dictionary keeps read name for key and tuple (position, orientation) for values"""
     Start={}
     Stop={}
     
@@ -293,12 +294,12 @@ def csvData (document):
     return (Start, Stop)
 
 def dataAnalyseStart (Start,genomeSize):
-    """Décompte des insertions présentes dans chaque sens le long du génome en fonction du dictionnaire des inserts
-    input : dictionnaire des insert et taille du génome
-    output : array de int de trois lignes :
-        - indice de la position
-        - nombre d'insertions forward
-        - nombre d'insertions reverse"""
+    """From inserts dict, count inserts present along the genome for each direction
+    input : inserts dict and genome size
+    output : tree lines numpy array:
+        - position
+        - forward inserts count
+        - reverse inserts count"""
     insert=np.array([np.arange(1,genomeSize+1,dtype=int),
            np.zeros(genomeSize,dtype=int),
            np.zeros(genomeSize,dtype=int)])
@@ -312,16 +313,16 @@ def dataAnalyseStart (Start,genomeSize):
     return insert
 
 def dataAnalysePaired (Start,Stop,genomeSize,Nsi=False):
-    """Analyse des jeux d'insertion avec sites de fin d'encapsidation
+    """Analysed end of encapsidation
     input : 
-        - dictionnaire des débuts d'insertions
-        - dictionnaire des fins d'insertions
-        - taille du genome
-        - bool pour l'exclusion des fins d'insertions a proximité d'un site de restriction définie dans NsiI_list()
-    output : tuple de 3 résultats
-        - liste d'int de toutes les taille des fragments encapsidés
-        - insert de fin d'encapsidation
-        - dictionnaire des reads non utilisés"""
+        - dict of beginning insertions
+        - dict of end insertions
+        - genome size
+        - bool for exclusion  of reads close to NsiI_list()
+    output : tuple of 3 results
+        - list of all encapsidated fragments size
+        - end encapsidation inserts
+        - dict of unused reads"""
     if Nsi:
         nsiI=NsiI_list()
     else:
@@ -330,7 +331,7 @@ def dataAnalysePaired (Start,Stop,genomeSize,Nsi=False):
     
     Reads=0
     Taille=[]
-    cut=0 #Nb de reads coupés par NsiI
+    cut=0
     
     unused={}
     
@@ -391,22 +392,22 @@ def dataAnalysePaired (Start,Stop,genomeSize,Nsi=False):
     
     return (Taille, insert, unused)
 
-#############################################
-# Functions - graph() et graph en découlant #
-#############################################
+###################################################
+# Functions - graph() and other graphic functions #
+###################################################
 
 def graph(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,size=None,Ymax=None):
-    """ fonction principale pour les graph d'insertion
+    """ main graphical function
     input : 
-        - vecteur du decompte des reads
-        - nom du graph (pour sauvegarde)
-        - liste des ticks a affiher
-        - titre du graph
-        - liste des site NsiI a afficher
-        - bool de sauvegarde (sinon affichage)
-        - taille du graph
+        - vector of reads counts
+        - graph name
+        - ticks list
+        - graph title
+        - list of NsiI site to plot
+        - bool for saving (or plotting)
+        - graph size
         - Ymax
-    output : sauvegarde ou affichage du graph"""
+    output : graph"""
     if not titre:
         titre=name
         
@@ -441,7 +442,6 @@ def graph(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,size=Non
     else:
         Ymax=insert[1:,:].sum(axis=0).max()
     
-    #Site NsiI
     if NSI:
         for nsi in NSI:
             markerline, stemlines, baseline = plt.stem(np.array([nsi]), np.array([Ymax]),':')
@@ -455,9 +455,9 @@ def graph(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,size=Non
     return
 
 def graphMirror(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,size=None,Ymax=None):
-    """ affichage du graph en mirroir avec les inserts forwards vers le haut et les reverses vers le bas
-    input : identique à graph()
-    output : sauvegarde ou affichage du graph"""
+    """mirror graph with forward inserts (up) and reverse inserts (bottom)
+    input : like graph()
+    output : graph"""
     if not titre:
         titre=name
         
@@ -494,7 +494,6 @@ def graphMirror(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,si
         YmaxUp=insert[1,:].max()
         YmaxDown=-insert[2,:].max()
     
-    #Site NsiI
     if NSI:
         for nsi in NSI:
             markerline, stemlines, baseline = plt.stem(np.array([nsi]), np.array([YmaxUp]),':')
@@ -508,40 +507,40 @@ def graphMirror(insert,name="graph",ticks=None,titre=None,NSI=None,save=False,si
     plt.close()
     return
 
-def graph_multiline(insert,ligne=10,ticks=200,name="graph",titre=None,NSI=None,save=False,size=(16,2.8)):
-    """ affichage du graph découpé en plusieurs ligne
-    input : identique à graph()
-        - ligne : nombre de lignes à afficher
-    output : sauvegarde ou affichage des graphs"""
-    pas=ceil(float(len(insert[0])/ligne))
+def graph_multiline(insert,line=10,ticks=200,name="graph",titre=None,NSI=None,save=False,size=(16,2.8)):
+    """display a multiline graph
+    input : like graph()
+        - line : number of lines to display
+    output : graphs"""
+    pas=ceil(float(len(insert[0])/line))
     Ymax=insert[1:,:].sum(axis=0).max()
-    for i in range(ligne):        
-        graph(insert[:,i*pas:(i+1)*pas],ticks=ticks,name="%s_%ion%i"%(name,i+1,ligne),titre=titre,NSI=NSI,save=save,size=size,Ymax=Ymax)
+    for i in range(line):        
+        graph(insert[:,i*pas:(i+1)*pas],ticks=ticks,name="%s_%ion%i"%(name,i+1,line),titre=titre,NSI=NSI,save=save,size=size,Ymax=Ymax)
 
 def graph_pics(insert,pic,delta=25,ticks=25,name="pic",titre=None,NSI=None,save=False,size=None):
-    """ affichage des graphs au niveau des positions ou le nombre d'inserts dépasse un certain seuil
-    input : identique à graph()
-        - pic : seuil a partir duquel les graphs sont affichés
-        - delta : nombre de base de part et d'autres des pics
-    output : sauvegarde ou affichage du graph"""
+    """display graphs each time sums of inserts exceeds a variable threshold
+    input : like graph()
+        - pic : threshold
+        - delta : range around peaks
+    output : graphs"""
     insertSum=insert[1:,:].sum(axis=0)
     big=insertSum>pic
     for i in range(len(big)):
         if big[i]:
             graph(insert[:,i-delta:i+delta],ticks=ticks,name="%s_%i"%(name,i),titre=titre,NSI=NSI,save=save,size=size)
 
-def TablePics(insert,pic=1000,delta=25,bacterie="Pa14"):
-    """ Generation d'une table CSV et d'une annotation GFF des pics d'insert
+def TablePics(insert,pic=1000,delta=25,bact="Pa14"):
+    """Build a CSV table and a GFF file focus on peaks
     input : 
-        - vecteur du decompte des reads
-        - seuil a partir duquel les graphs sont affichés
-        - nombre de base de part et d'autres des pics
-        - bacterie utilisée
-    output : enregistrement de la table CSV et du fichier GFF"""
+        - vector of reads counts
+        - peaks threshold
+        - base around peaks
+        - bacteria utilized
+    output : CSV table GFF file"""
     insertSum=insert[1:,:].sum(axis=0)
     big=insertSum>pic
     
-    YRS=np.array(motif(bacterie),dtype=int)
+    YRS=np.array(motif(bact),dtype=int)
     NSI=np.array(NsiI(),dtype=int)
     
     fichier=open("fig/tableHotspot.csv", "wb")
@@ -552,36 +551,35 @@ def TablePics(insert,pic=1000,delta=25,bacterie="Pa14"):
     
     for i in range(len(big)):
         if big[i]:
-            ligne=[]
-            ligne.append(i) #Position
-            ligne.append(insertSum[i]) #Nb Inserts
+            line=[]
+            line.append(i)
+            line.append(insertSum[i])
             
             closeMotif=YRS[abs(i-YRS[:,0])==min(abs(i-YRS[:,0])),0]
-            ligne.append(abs(i-closeMotif)) #Distance Motif
-            ligne.append(closeMotif)#Position Motif
+            line.append(abs(i-closeMotif))
+            line.append(closeMotif)
             
             nsi1=abs(i-max(filter(lambda x:i-x>0,NSI[:,1])))
             nsi2=abs(i-min(filter(lambda x:i-x<0,NSI[:,0])))
-            ligne.append((nsi1,nsi2)) #Distance NsiI
+            line.append((nsi1,nsi2))
             
-            ligne.append(float(np.sum(insert[1,i-delta:i+delta]))/sum(insertSum[i-delta:i+delta])) #Ratio forward
+            line.append(float(np.sum(insert[1,i-delta:i+delta]))/sum(insertSum[i-delta:i+delta]))
+            writer.writerow(line)
             
-            writer.writerow(ligne)
-            
-            GFF.write("%s\tPython\thotspot\t%i\t%i\t.\t+\t.\t\n"%(bacterie,i,i))
+            GFF.write("%s\tPython\thotspot\t%i\t%i\t.\t+\t.\t\n"%(bact,i,i))
             
                         
     fichier.close()
     GFF.close()
 
-##############################
-# Functions - autres graphes #
-##############################
+#################
+# others graphs #
+#################
 
 def graph_separate(insert,save=False):
-    """ affichage de 2 graphs, un pour les inserts forwards et l'autre pour les inserts reverses
-    input : vecteur du decompte des reads et bool de sauvegarde
-    output : sauvegarde ou affichage des graphs"""
+    """display two separeted graphs : one for forward inserts and one for reverse
+    input : vector of reads counts
+    output : graphs"""
     forward=insert[1,:]
     reverse=insert[2,:]
     
@@ -619,9 +617,9 @@ def graph_separate(insert,save=False):
     return
 
 def graph_global(insert,name="graph",titre=None,save=False):
-    """affichage d'un graph en sommant les inserts forwards et reverse
-    input : vecteur du decompte des reads, nom du graph, titre du graph et bool de sauvegarde
-    output : sauvegarde ou affichage du graph"""
+    """display rapidly a global graph by adding forward and reverse inserts
+    input : vector of reads counts, graph name, graph title, bool for saving
+    output : graph"""
     if not titre:
         titre=name
         
@@ -640,21 +638,21 @@ def graph_global(insert,name="graph",titre=None,save=False):
     plt.close()
     return
 
-#######################
-# Histo taille insert #
-#######################
+############################
+# Histogram of insert size #
+############################
 
-def histo(taille,bins=None,name="histo",axies=None,titre=None,save=False,size=(16,8),Xmax=None):
-    """histogramme de la taille des inserts et binning si souhaité
+def histo(taille,bins=None,name="histo",axes=None,titre=None,save=False,size=(16,8),Xmax=None):
+    """histogram of insert size and binning if desired
     input : 
-        - liste de la taille des inserts produit avec la fonction dataAnalysePaired()
-        - liste des position de binning
-        - liste des axes [Xmin, Xmax, Ymin, Ymax]
-        - titre du graph
-        - bool de sauvegarde
-        - taille du graph
-        - ordonnée Xmax
-    output : sauvegarde ou affichage de l'histogramme"""
+        - list of insert size (product with dataAnalysePaired())
+        - list of binning positions
+        - axes = [Xmin, Xmax, Ymin, Ymax]
+        - graph title
+        - bool for saving (or plotting)
+        - graph size
+        - ordinate Xmax
+    output : histogram"""
     if not titre:
         titre=name
         
@@ -679,9 +677,8 @@ def histo(taille,bins=None,name="histo",axies=None,titre=None,save=False,size=(1
     if Xmax:
         plt.xlim((0,Xmax))
         
-    if axies:
-        plt.axis(axies)
-
+    if axes:
+        plt.axis(axes)
     
     #Save ?
     if save:
@@ -692,10 +689,10 @@ def histo(taille,bins=None,name="histo",axies=None,titre=None,save=False,size=(1
     plt.close()
     return
 
-def histoDouble(taille1,taille2,bins1=None,bins2=None,name="histo",axies=None,titre=None,save=False,size=(16,8),Xmax=None):
-    """histogramme de la taille de deux jeux d'inserts et binning si souhaité
-    input : identique a histo () avec taille1 et taille 2 pour chaque jeux de taille d'inserts et bin1 et bin2 associé
-    output : sauvegarde ou affichage de l'histogramme"""
+def histoDouble(taille1,taille2,bins1=None,bins2=None,name="histo",axes=None,titre=None,save=False,size=(16,8),Xmax=None):
+    """double histogram
+    input : like histo () with taille1 et taille2 for each inserts size and bin1 et bin2 associated
+    output : histogram"""
     if not titre:
         titre=name
         
@@ -726,8 +723,8 @@ def histoDouble(taille1,taille2,bins1=None,bins2=None,name="histo",axies=None,ti
     if Xmax:
         plt.xlim((0,Xmax))
         
-    if axies:
-        plt.axis(axies)
+    if axes:
+        plt.axis(axes)
 
     
     #Save ?
@@ -738,5 +735,3 @@ def histoDouble(taille1,taille2,bins1=None,bins2=None,name="histo",axies=None,ti
         
     plt.close()
     return
-
-

@@ -4,9 +4,7 @@
 
 from functions import *
 
-
-#Insertion de Ab30 dans un autre phage
-print "#Insertion de Ab30 dans un autre phage"
+print "# Insertion de Ab30 dans un autre phage"
 
 A_Ab30_DATA=csvData("DATA/A_Ab30_droite2.csv")
 A_Ab30_insert=dataAnalyseStart(A_Ab30_DATA[0],Size["Ab30"])
@@ -35,14 +33,13 @@ graph(AB_Ab30_insert[:,5399:7000],titre=u"A+B inserts distribution on Ab30 (focu
 
 for banque in [A_Ab30_insert, B_Ab30_insert]:
     print "****"  
-    print "nombre d'inserts =        %i"%banque[1:,:].sum()
-    print "ratio forward =           %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
-    print "insertion moyenne =       %f"%np.mean(banque[1:,:].sum(axis=0)) #nombre moyen d'inserts par base
-    print "variance =                %f"%np.var(banque[1:,:].sum(axis=0))  #variance du nb d'inserts par base
+    print "inserts count =                    %i"%banque[1:,:].sum()
+    print "ratio forward =                    %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
+    print "mean insertion =                   %f"%np.mean(banque[1:,:].sum(axis=0))
+    print "variance =                         %f"%np.var(banque[1:,:].sum(axis=0))
 print "****"
 
-#Insertion de Ab30 chez Pa14
-print "#Insertion de Ab30 chez Pa14"
+print "# Insertion of Ab30 in Pa14"
 
 A_Pa14_DATA=csvData("DATA/A_Pa14_droite2.csv")
 A_Pa14_insert=dataAnalyseStart(A_Pa14_DATA[0],Size["Pa14"])
@@ -56,51 +53,47 @@ graph_global(B_Pa14_insert,titre=u"B inserts distribution on PA14", name="f5_B",
 
 for banque in [A_Pa14_insert, B_Pa14_insert]:
     print "****"  
-    print "nombre d'inserts =        %i"%banque[1:,:].sum()
-    print "ratio forward =           %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
-    print "insertion moyenne =       %f"%np.mean(banque[1:,:].sum(axis=0)) #nombre moyen d'inserts par base
-    print "variance =                %f"%np.var(banque[1:,:].sum(axis=0))  #variance du nb d'inserts par base
-    print "concentation aux motifs = %f"%pourcentMotif(banque, "Pa14")             #ratio insert apres un motif / nombre total d'insert
+    print "inserts count =                    %i"%banque[1:,:].sum()
+    print "ratio forward =                    %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
+    print "mean insertion =                   %f"%np.mean(banque[1:,:].sum(axis=0))
+    print "variance =                         %f"%np.var(banque[1:,:].sum(axis=0))
+    print "concentration closes to patterns = %f"%pourcentMotif(banque, "Pa14")
 print "****"
 
 AB_Pa14_insert=addition([A_Pa14_insert,B_Pa14_insert])
 
 for banque in [AB_Pa14_insert]:
     print "****"  
-    print "nombre d'inserts =        %i"%banque[1:,:].sum()
-    print "ratio forward =           %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
-    print "insertion moyenne =       %f"%np.mean(banque[1:,:].sum(axis=0)) #nombre moyen d'inserts par base
-    print "variance =                %f"%np.var(banque[1:,:].sum(axis=0))  #variance du nb d'inserts par base
-    print "concentation aux motifs = %f"%pourcentMotif(banque, "Pa14")     #ratio insert apres un motif / nombre total d'insert
+    print "inserts count =                    %i"%banque[1:,:].sum()
+    print "ratio forward =                    %f"%(float(banque[1,:].sum())/banque[1:,:].sum())
+    print "mean insertion =                   %f"%np.mean(banque[1:,:].sum(axis=0))
+    print "variance =                         %f"%np.var(banque[1:,:].sum(axis=0))
+    print "concentration closes to patterns = %f"%pourcentMotif(banque, "Pa14")
 print "****"
 
 graph_global(AB_Pa14_insert,titre=u"A+B inserts distribution on Pa14", name="f6",save=True)
 
 graph(AB_Pa14_insert[:,5217624:5217700],titre=u"Inserts distribution at a hotspot position",ticks=25,name="f7",NSI=NsiI_list(),save=True) 
-##u"Focalisation sur les insertions de la banque A+B\nau sein de Pa14 au niveau d'un hotspot"
 
 graph_pics(AB_Pa14_insert,pic=2500,ticks=25,name="hotspot/",titre=None,NSI=NsiI_list(),save=True,size=None)
 
 graph(AB_Pa14_insert[:,5729499:5736000],titre=u"Inserts distribution at two differents hotspot position",ticks=2000,name="f11a",NSI=NsiI_list(),save=True)
 graph(AB_Pa14_insert[:,5729499:5736000],titre=u"Inserts distribution at two differents hotspot position",ticks=2000,name="f11b",save=True)
-#focus 12 à 13
 
 test=group(AB_Pa14_insert[:,5729499:5736000],pas=10)
 graph(test,titre=u"Inserts distribution at two differents hotspot position (by 10bp)",ticks=2000,name="f11c",NSI=NsiI_list(),save=True)
 
-#Hors Hotspots
-print "#Hors Hotspots"
+print "# Excluding Hotspots"
 
 AB_Pa14_insertBeg50=group(AB_Pa14_insert[:,0:40000],pas=50)
 graph(AB_Pa14_insertBeg50,titre=u"Inserts distribution beginning of bacteria",NSI=NsiI_list(),ticks=5000,name="f12",save=True)
 
-graph_multiline(AB_Pa14_insert[:,0:6000],ticks=200,ligne=6,name="f13",NSI=NsiI_list(),save=True)
+graph_multiline(AB_Pa14_insert[:,0:6000],ticks=200,line=6,name="f13",NSI=NsiI_list(),save=True)
 
 AB_Pa14_insert_outNSI=group(AB_Pa14_insert[:,6011715:6111715],pas=10)
 graph(AB_Pa14_insert_outNSI,titre=u"Inserts distribution of bacteria without NsiI site (by 10bp)",NSI=NsiI_list(),name="f13b",save=True)
 
-#Table
-print "#Table"
+print "# Table"
 
 TablePics(AB_Pa14_insert,pic=2500)
 
@@ -116,31 +109,24 @@ for yrs in YRS:
         
     if sens:
         for banque in [A_Pa14_insert, B_Pa14_insert]:
-            #table.append(np.max(banque[1:,i+52:i+78].sum(axis=0)))
             table.append(np.max(banque[1:,i+49:i+81].sum(axis=0)))
-            #table.append(round(np.mean(banque[1:,i+52:i+78].sum(axis=0)),2))
             table.append(round(np.mean(banque[1:,i+49:i+81].sum(axis=0)),2))
             
     elif not sens:
         for banque in [A_Pa14_insert, B_Pa14_insert]:
-            #table.append(np.max(banque[1:,i-78:i-52].sum(axis=0)))
             table.append(np.max(banque[1:,i-81:i-49].sum(axis=0)))
-            #table.append(round(np.mean(banque[1:,i-78:i-52].sum(axis=0)),2))
             table.append(round(np.mean(banque[1:,i-81:i-49].sum(axis=0)),2))
-    #TABLE.append(table)
     writer.writerow(table)
 
 fichier.close()
 
-#Fin d encapsidation
-print "#Fin d encapsidation"
+print "# End of encapsidation"
 
 (Taille_A_Pa14,A_Pa14_insertEnd,A_Pa14_unused)=dataAnalysePaired(A_Pa14_DATA[0],A_Pa14_DATA[1],Size["Pa14"],Nsi=True)
-histo(Taille_A_Pa14,titre="Histogram of inserts size",name="f14",axies=[0,750, 0,20000],save=True)
+histo(Taille_A_Pa14,titre="Histogram of inserts size",name="f14",axes=[0,750, 0,20000],save=True)
 graph_global(A_Pa14_insertEnd,titre=u"End of A inserts distribution on PA14", name="f15",save=True)
 
-#Extrémités gauches
-print "#Extrémités gauches"
+print "# Left ends"
 
 Ag_Pa14_DATA=csvData("DATA/A_Pa14_gauche.csv")
 Ag_Pa14_insert=dataAnalyseStart(Ag_Pa14_DATA[0],Size["Pa14"])
@@ -149,19 +135,16 @@ Ag_Pa14_insert=dataAnalyseStart(Ag_Pa14_DATA[0],Size["Pa14"])
 histo(Taille_Ag_Pa14,bins=range(8,max(Taille_Ag_Pa14),11),Xmax=350,name="f16",save=True)
 graph_global(Ag_Pa14_insert,titre=u"A left inserts distribution on PA14", name="f17",save=True)
 
-"concentation aux motifs = %f"%pourcentMotif(Ag_Pa14_insert,"Pa14")
+print "concentration closes to patterns = %f"%pourcentMotif(Ag_Pa14_insert,"Pa14")
 
-#Sans NsiI
-print "#Sans NsiI"
+print "# Without NsiI"
 
 Ab30_Pa14_DATA=csvData("DATA/Ab30_Pa14_droite2.csv")
 Ab30_Pa14_insert=dataAnalyseStart(Ab30_Pa14_DATA[0],Size["Pa14"])
 
-"concentation aux motifs = %f"%pourcentMotif(Ab30_Pa14_insert,"Pa14")
+print "concentration closes to patterns = %f"%pourcentMotif(Ab30_Pa14_insert,"Pa14")
 
-
-#Autres phages
-print "#Autres phages"
+print "# Others phages"
 
 PM_DATA=csvData("DATA/PM105_PAOI_gauche.csv")
 PM_insert=dataAnalyseStart(PM_DATA[0],Size["PAOI"])
@@ -170,9 +153,9 @@ graph_global(PM_insert,titre=u"PM105 inserts distribution on PAOI", name="f20",s
 histo(PM[0],bins=range(8,max(PM[0]),11),Xmax=350,name="f22",save=True)
 
 print "****"  
-print "insertion moyenne =       %f"%np.mean(PM_insert[1:,:].sum(axis=0))
-print "variance =                %f"%np.var(PM_insert[1:,:].sum(axis=0))
-print "concentation aux motifs = %f"%pourcentMotif(PM_insert,"PAOI")
+print "insertion moyenne =                %f"%np.mean(PM_insert[1:,:].sum(axis=0))
+print "variance =                         %f"%np.var(PM_insert[1:,:].sum(axis=0))
+print "concentration closes to patterns = %f"%pourcentMotif(PM_insert,"PAOI")
 
 P1_DATA=csvData("DATA/2P1_II10_gauche.csv")
 P1_insert=dataAnalyseStart(P1_DATA[0],Size["II10"])
@@ -181,12 +164,11 @@ graph_global(P1_insert,titre=u"2P1 inserts distribution on II10", name="f18",sav
 histo(P1[0],bins=range(8,max(P1[0]),11),Xmax=350,name="f19",save=True)
 
 print "****"  
-print "insertion moyenne =       %f"%np.mean(P1_insert[1:,:].sum(axis=0))
-print "variance =                %f"%np.var(P1_insert[1:,:].sum(axis=0))
-print "concentation aux motifs = %f"%pourcentMotif(P1_insert,"II10")
+print "insertion moyenne =                %f"%np.mean(P1_insert[1:,:].sum(axis=0))
+print "variance =                         %f"%np.var(P1_insert[1:,:].sum(axis=0))
+print "concentration closes to patterns = %f"%pourcentMotif(P1_insert,"II10")
 
-#ms223
-print "#ms223"
+print "# ms223"
 
 a_ms223=dataAnalyseStart(csvData("DATA/ms223_A.csv")[0],6500)
 b_ms223=dataAnalyseStart(csvData("DATA/ms223_B.csv")[0],6500)
@@ -224,13 +206,13 @@ plt.savefig("fig/f23b.jpeg",dpi=600,transparant=True)
 
 t()
 
-##Ajout mars 2016
+##March 2016
 
-AB_Pa14_insert_outNSI=group(AB_Pa14_insert[:,6011715:6111715],pas=10) #plus grand segment sans nsi
+AB_Pa14_insert_outNSI=group(AB_Pa14_insert[:,6011715:6111715],pas=10) #Bigest  segment without NsiI
 graph(AB_Pa14_insert_outNSI,titre=u"Inserts distribution of bacteria without NsiI site (by 10bp)",NSI=NsiI_list(),Ymax=150,name="c1",save=True) 
 graphMirror(AB_Pa14_insert_outNSI,titre=u"Inserts distribution of bacteria without NsiI site (by 10bp)",NSI=NsiI_list(),Ymax=150,name="c2",save=True)
 
-graphMirror(AB_Pa14_insert[:,6055600:6055700],NSI=NsiI_list(),name="c3",save=True) #hotspot dégénéré
+graphMirror(AB_Pa14_insert[:,6055600:6055700],NSI=NsiI_list(),name="c3",save=True) #degenerate hotspot
 
 graphMirror(AB_Pa14_insert[:,5217624:5217700],titre=u"Inserts distribution at a hotspot position",ticks=25,name="c4",NSI=NsiI_list(),save=True) #f7-like
 
@@ -250,13 +232,5 @@ A_Pa14_insert254825=selectinrange(A_Pa14_DATA[0],range(254805,254830+1))
 (Taille_A_Pa14_254825,A_Pa14_insertEnd_254825,A_Pa14_unused)=dataAnalysePaired(A_Pa14_insert254825,A_Pa14_DATA[1],Size["Pa14"],Nsi=True)
 histoDouble(Taille_A_Pa14,Taille_A_Pa14_254825,titre="Histogram of inserts in hotspot ms211",name="n11",Xmax=750,save=True)
 
-
 t()
 raw_input("Done.")
-
-############################################################################################################################
-
-
-
-
-
