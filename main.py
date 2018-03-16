@@ -4,7 +4,7 @@
 
 from functions import *
 
-print "# Insertion de Ab30 dans un autre phage"
+print "# Insertion of Ab30 in another phage"
 
 A_Ab30_DATA=csvData("DATA/A_Ab30_droite2.csv")
 A_Ab30_insert=dataAnalyseStart(A_Ab30_DATA[0],Size["Ab30"])
@@ -153,7 +153,7 @@ graph_global(PM_insert,titre=u"PM105 inserts distribution on PAOI", name="f20",s
 histo(PM[0],bins=range(8,max(PM[0]),11),Xmax=350,name="f22",save=True)
 
 print "****"  
-print "insertion moyenne =                %f"%np.mean(PM_insert[1:,:].sum(axis=0))
+print "mean insertion =                   %f"%np.mean(PM_insert[1:,:].sum(axis=0))
 print "variance =                         %f"%np.var(PM_insert[1:,:].sum(axis=0))
 print "concentration closes to patterns = %f"%pourcentMotif(PM_insert,"PAOI")
 
@@ -164,7 +164,7 @@ graph_global(P1_insert,titre=u"2P1 inserts distribution on II10", name="f18",sav
 histo(P1[0],bins=range(8,max(P1[0]),11),Xmax=350,name="f19",save=True)
 
 print "****"  
-print "insertion moyenne =                %f"%np.mean(P1_insert[1:,:].sum(axis=0))
+print "mean insertion =                   %f"%np.mean(P1_insert[1:,:].sum(axis=0))
 print "variance =                         %f"%np.var(P1_insert[1:,:].sum(axis=0))
 print "concentration closes to patterns = %f"%pourcentMotif(P1_insert,"II10")
 
