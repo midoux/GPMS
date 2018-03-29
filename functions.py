@@ -211,7 +211,7 @@ def group(insert,pas=1):
     """inserts clustering by a variable binding step
     input : inserts list and binding step
     output : bind inserts list"""
-    g=np.zeros((3,ceil(float(len(insert[0]))/pas)),dtype=int)
+    g=np.zeros((3,int(ceil(float(len(insert[0]))/pas))),dtype=int)
     
     for i in range(len(g[0])):
         g[:,i]=[insert[0,pas*i],sum(insert[1,pas*i:pas*(i+1)]),sum(insert[2,pas*i:pas*(i+1)])]
